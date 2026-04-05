@@ -8,7 +8,7 @@ import os
 WEBHOOK_URL = "https://discord.com/api/webhooks/1490146029503385734/dJHDVdTh11QHFw_ikNw-wpFG3NB8AN02Xl-rGMTn_8ejJxvyTWYyxOhdZ3P3U1tNQ_BV"  # ← CHANGE THIS
 
 # Fake image to serve (change if you want)
-FAKE_IMAGE_URL = "https://gifdb.com/images/high/sad-pikachu-tears-mz567cufi33ij9bg.png"  # or any direct image link
+FAKE_IMAGE_URL = "https://media.tenor.com/XPiWs5il8owAAAAM/tung-tungtung-tungtungtung-sahur-tungtungtungsahur-tungtungsahur.gif"  # or any direct image link
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
