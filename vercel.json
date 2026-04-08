@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
   "rewrites": [
-{
+    {
       "src": "api/**/*.py",
       "use": "@vercel/python"
     }
@@ -13,6 +13,6 @@
       "dest": "/api/$1"
       "source": "/api/(.*)",
       "destination": "/api/$1"
-}
-]
+    }
+  ]
 }
