@@ -1,8 +1,9 @@
-{
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    }
-  ]
-}
+services:
+  - type: web
+    name: tungtung-lockdown
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python your_script.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
